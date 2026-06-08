@@ -78,15 +78,47 @@ npm run allure:report
 
 ## Step 5 — Add a New Portal
 
-Open the `template/STEPS.txt` file — it walks you through adding a new portal step by step.
+Follow these 7 steps (using **amazon** as the example):
 
-The short version:
-1. Copy the `template/` folder files and rename from `portalname` to your portal name
-2. Fill in the URL and credentials in `config/`
-3. Fill in the locators in `pages/`
-4. Add your page objects to `fixtures/`
-5. Write the test in `tests/`
-6. Add a run script in `package.json`
+**1. Create these folders**
+```
+config/amazon/
+fixtures/amazon/
+pages/amazon/
+tests/amazon/
+```
+
+**2. Create the config file** → `config/amazon/amazon.ts`
+Copy from `template/config/portalname/portalname.ts`
+Fill in the URL, username, password
+
+**3. Create the page files** → `pages/amazon/`
+Copy from `template/pages/portalname/`
+Rename to `01_LoginPage.ts`, `02_HomePage.ts`, etc.
+Fill in the locators (right-click element in Chrome → Inspect → copy id or data-test)
+Add more page files (`03_`, `04_` ...) for each new page in the journey
+
+**4. Create the fixture file** → `fixtures/amazon/amazon.ts`
+Copy from `template/fixtures/portalname/portalname.ts`
+Add one line per page file you created in step 3
+
+**5. Create the test file** → `tests/amazon/amazon.spec.ts`
+Copy from `template/tests/portalname/portalname.spec.ts`
+Write the test steps using your page objects
+
+**6. Add a run script** → `package.json`
+```json
+"test:amazon": "playwright test tests/amazon"
+```
+
+**7. Run it**
+```bash
+npm run test:amazon                  (headless)
+npm run test:amazon -- --headed      (see the browser)
+npm run test:allure                  (run all portals + open Allure report)
+```
+
+> Need more detail? Open `template/STEPS.txt` or `template/miniNotes.txt`
 
 ---
 
