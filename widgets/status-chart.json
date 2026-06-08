@@ -1,0 +1,1 @@
+[{"uid":"75c8e9a2bd84873a","name":"TS01 - Full E2E - login to order complete","time":{"start":1780887645243,"stop":1780887646372,"duration":1129},"status":"passed","severity":"normal"},{"uid":"cd720ddc6a178524","name":"TS01 - Full E2E - login to employee list","time":{"start":1780887645240,"stop":1780887653564,"duration":8324},"status":"passed","severity":"normal"}]

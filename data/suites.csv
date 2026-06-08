@@ -1,0 +1,3 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","1129","TS01 - Full E2E - login to order complete","chromium","2026-06-08","passed","2026-06-08","SauceDemo","","",""
+"","8324","TS01 - Full E2E - login to employee list","chromium","2026-06-08","passed","2026-06-08","OrangeHRM","","",""
