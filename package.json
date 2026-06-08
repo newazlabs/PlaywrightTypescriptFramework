@@ -16,7 +16,9 @@
     "allure:generate":  "allure generate allure-results --clean -o allure-report",
     "allure:open":      "allure open allure-report",
     "allure:report":    "npm run allure:generate && npm run allure:open",
-    "test:allure":      "npm test && npm run allure:report"
+    "test:allure":      "npm test && npm run allure:report",
+    "test:wikipedia": "playwright test tests/wikipedia",
+    "test:bookstoscrape": "playwright test tests/bookstoscrape"
   },
   "keywords": [],
   "author": "",
