@@ -1,0 +1,104 @@
+HOW TO ADD A NEW PORTAL
+========================
+
+QUICK SUMMARY
+-------------
+Copy this template/ folder, rename everything from "portalname" to your portal name,
+fill in the locators and credentials, then write your test.
+
+
+STEP 1 — Copy and rename the files
+------------------------------------
+Copy these files and rename them (replace "portalname" with your portal name e.g. "amazon"):
+
+  template/config/portalname/portalname.ts         →   config/amazon/amazon.ts
+  template/fixtures/portalname/portalname.ts        →   fixtures/amazon/amazon.ts
+  template/pages/portalname/01_LoginPage.ts         →   pages/amazon/01_LoginPage.ts
+  template/pages/portalname/02_HomePage.ts          →   pages/amazon/02_HomePage.ts
+  template/pages/portalname/03_SamplePage.ts        →   pages/amazon/03_SamplePage.ts
+  template/tests/portalname/portalname.spec.ts      →   tests/amazon/amazon.spec.ts
+
+  Add more page files (04_, 05_, ...) as needed following the same pattern.
+  Page numbers should reflect the order of the user journey in the portal.
+
+
+STEP 2 — Update the config file  (config/amazon/amazon.ts)
+------------------------------------------------------------
+  - Replace baseUrl with your portal URL
+  - Replace username and password with real credentials
+  - Add more user types if your portal has them (e.g. admin, viewer, guest)
+
+
+STEP 3 — Update each page object  (pages/amazon/0X_PageName.ts)
+-----------------------------------------------------------------
+Inside each file, do a find & replace:
+  - "portalname" → "amazon"    (for import paths)
+  - "PortalName" → "Amazon"    (for class names - note the capital P)
+
+Then fill in the locators in the constructor:
+  page.locator('')  →  page.locator('#actual-id')
+
+Tips for finding locators:
+  - Open the portal in Chrome
+  - Right-click an element → Inspect
+  - Look for id, data-test, name attributes (most reliable)
+  - Use CSS selectors like: #id, .class, [name="x"], [data-test="x"]
+
+Add action methods and getter methods following the existing pattern:
+  - Action  →  async clickSomething(): Promise<void>
+  - Getter  →  async getSomethingText(): Promise<string>
+
+
+STEP 4 — Update the fixture file  (fixtures/amazon/amazon.ts)
+--------------------------------------------------------------
+Inside the file, do a find & replace:
+  - "portalname" → "amazon"    (for import paths)
+  - "PortalnamePages" → "AmazonPages"    (for the type name)
+
+If you added extra page files (04_, 05_, ...), add matching lines:
+  - Add the import at the top
+  - Add the type entry inside AmazonPages
+  - Add the fixture entry inside base.extend
+
+
+STEP 5 — Write the test  (tests/amazon/amazon.spec.ts)
+-------------------------------------------------------
+  - Import from your fixture file (not from @playwright/test directly)
+  - Declare the page objects you need in the test parameters
+  - One test covering the full workflow from login to final action
+  - Follow the pattern: navigate → act → expect
+
+
+STEP 6 — Add a run script to package.json
+------------------------------------------
+Add this line inside "scripts" in package.json:
+
+  "test:amazon": "playwright test tests/amazon"
+
+Then run your test with:
+
+  npm run test:amazon                  (headless - just this portal)
+  npm run test:amazon -- --headed      (see the browser - just this portal)
+  npm run test:allure                  (run ALL portals + open Allure report)
+
+
+FOLDER STRUCTURE REFERENCE
+---------------------------
+config/
+  amazon/
+    amazon.ts             ← URL + credentials
+
+fixtures/
+  amazon/
+    amazon.ts             ← page objects wired up, import test + expect from here
+
+pages/
+  amazon/
+    01_LoginPage.ts       ← login actions + error message
+    02_HomePage.ts        ← first page after login
+    03_SamplePage.ts      ← next page in the journey
+    ...                   ← add more pages as needed
+
+tests/
+  amazon/
+    amazon.spec.ts        ← single E2E test file
