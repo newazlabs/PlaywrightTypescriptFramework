@@ -1,0 +1,58 @@
+HOW TO ADD A NEW PORTAL (Quick Guide)
+======================================
+Example: adding "amazon"
+
+
+STEP 1 — Create these folders
+------------------------------
+config/amazon/
+fixtures/amazon/
+pages/amazon/
+tests/amazon/
+
+
+STEP 2 — Create the config file
+--------------------------------
+File: config/amazon/amazon.ts
+Copy from: template/config/portalname/portalname.ts
+Fill in: URL, username, password
+
+
+STEP 3 — Create the page files
+--------------------------------
+Folder: pages/amazon/
+Copy from: template/pages/portalname/
+Rename to: 01_LoginPage.ts, 02_HomePage.ts, etc.
+Fill in: locators (right-click element in Chrome → Inspect → copy id or data-test)
+Add more page files (03_, 04_ ...) for each new page in the journey
+
+
+STEP 4 — Create the fixture file
+----------------------------------
+File: fixtures/amazon/amazon.ts
+Copy from: template/fixtures/portalname/portalname.ts
+Add one line per page file you created in Step 3
+
+
+STEP 5 — Create the test file
+--------------------------------
+File: tests/amazon/amazon.spec.ts
+Copy from: template/tests/portalname/portalname.spec.ts
+Write the test steps using your page objects
+
+
+STEP 6 — Add a run script
+---------------------------
+Open package.json and add this line inside "scripts":
+
+  "test:amazon": "playwright test tests/amazon"
+
+
+STEP 7 — Run it
+-----------------
+  npm run test:amazon                  (headless)
+  npm run test:amazon -- --headed      (see the browser)
+  npm run test:allure                  (run all portals + open Allure report)
+
+
+Need more detail? Open template/STEPS.txt
