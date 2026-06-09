@@ -56,3 +56,55 @@ STEP 7 — Run it
 
 
 Need more detail? Open template/STEPS.txt
+
+
+FOLDER OVERVIEW
+===============
+
+config/
+  Contains one sub-folder per portal (e.g. config/amazon/).
+  Each sub-folder holds a single TypeScript file that exports the portal's
+  base URL and login credentials. Page files import this to know where to
+  navigate and what credentials to use.
+
+fixtures/
+  Contains one sub-folder per portal (e.g. fixtures/amazon/).
+  Each sub-folder holds a fixture file that extends Playwright's base `test`
+  and wires up every Page Object for that portal. Test files import `test`
+  and `expect` from here instead of directly from Playwright.
+
+pages/
+  Contains one sub-folder per portal (e.g. pages/amazon/).
+  Each sub-folder holds numbered Page Object files (01_LoginPage.ts,
+  02_HomePage.ts, …). Each file models one screen: it stores locators as
+  private fields and exposes typed action/query methods. Tests never touch
+  raw Playwright locators — they call these methods instead.
+
+tests/
+  Contains one sub-folder per portal (e.g. tests/amazon/).
+  Each sub-folder holds the actual test spec file(s) (.spec.ts). Tests
+  import the fixture from fixtures/ and the config from config/, then
+  describe scenarios using the page-object methods from pages/.
+
+template/
+  Starter copies of every file type above, all named "portalname".
+  When adding a new portal, copy the relevant file from here, rename it,
+  and fill in the TODO comments. Nothing in this folder is imported by
+  real tests — it is purely a scaffolding reference.
+
+allure-results/
+  Raw JSON/XML data files written by the Allure reporter after each test run.
+  Do not edit manually. Consumed by `allure generate` to build the report.
+
+allure-report/
+  The generated Allure HTML report. Rebuilt every time you run
+  `npm run test:allure`. Open index.html in a browser to view results.
+
+playwright-report/
+  Playwright's built-in HTML report (index.html). Auto-generated after
+  every run. Viewable with `npx playwright show-report`.
+
+test-results/
+  Artifacts (screenshots, videos, traces) captured by Playwright on
+  test failure. Useful for debugging — open a trace with
+  `npx playwright show-trace test-results/.../trace.zip`.

@@ -28,6 +28,34 @@ Promise.all() - It runs multiple promises together and waits for all results.
 
 # class → object → constructor → this → method → inheritance → encapsulation → abstraction → polymorphism → POM
 
+
+1. EC2 → where your apps run (virtual computers in the cloud that execute your backend services)
+2. Kafka → moves data between apps (real-time messaging system that passes events like transactions between services)
+3. Spark → processes/analyses data (big data engine that quickly calculates, transforms, and analyzes large data streams)
+4. Aurora → stores structured data (database) (managed cloud database that saves final clean and reliable data like bank records)
+
+
+EC2 → where your apps run (like the bank’s main computer where “Send Money” request is received and handled)
+Kafka → moves data between apps (like a message line carrying “User A sent $100 to User B” to other systems)
+Spark → processes/analyses data (like a smart brain checking balance, fraud, and calculating if transaction is valid)
+Aurora → stores structured data (database) (like the bank record book storing final result: A -$100, B +$100)
+
+
+AWS EC2 (Elastic Compute Cloud)
+Virtual computers in the cloud. You can run your applications, servers, or code on them like a normal machine, but hosted by AWS.
+
+Kafka (Apache Kafka)
+A messaging system for moving data in real time. Think of it as a “data pipeline” that passes events (like clicks, logs, transactions) between systems.
+
+Spark (Apache Spark)
+A big data processing engine. It takes large amounts of data and processes it very fast (analytics, transformations, machine learning).
+
+Amazon Aurora
+A managed database from AWS. It’s like MySQL/PostgreSQL but faster, more scalable, and handled by AWS (backups, replication, etc. are automated).
+
+
+
+
 What is a class?
 - A class is a blueprint for creating objects.
 
