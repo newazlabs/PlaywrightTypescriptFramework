@@ -1,14 +1,14 @@
-import { Page, Locator } from '@playwright/test';
-  import { wikipediaConfig } from '../../config/wikipedia/wikipediaConfig';
+import { Page } from '@playwright/test';
+import { wikipediaConfig } from '../../config/wikipedia/wikipediaConfig';
 
-  export class LoginPage {
-      private page: Page;
+export class LoginPage {
+    readonly page: Page;
 
-      constructor(page: Page) {
-          this.page = page;
-      }
+    constructor(page: Page) {
+        this.page = page;
+    }
 
-      async navigate(): Promise<void> {
-          await this.page.goto(wikipediaConfig.baseUrl);
-      }
-  }
+    async navigate(): Promise<void> {
+        await this.page.goto(wikipediaConfig.baseUrl);
+    }
+}

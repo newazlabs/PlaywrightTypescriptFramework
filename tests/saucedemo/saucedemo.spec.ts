@@ -1,61 +1,77 @@
-import { test, expect }    from '../../fixtures/saucedemo/saucedemo';
-import { saucedemoConfig } from '../../config/saucedemo/saucedemo';
+import { test, expect }      from '../../fixtures/saucedemo/saucedemo';
+import { saucedemoConfig }   from '../../config/saucedemo/saucedemo';
+import { buildCheckoutInfo } from '../../utils/dataFactory';
 
 const { standard, lockedOut } = saucedemoConfig.users;
-const { firstName, lastName, postalCode } = saucedemoConfig.checkoutInfo;
 
-test.describe('SauceDemo', () => {
+// Login tests start from a clean (logged-out) browser.
+test.describe('SauceDemo - login', () => {
 
-    test('TS01 - Full E2E - login to order complete', async ({
-        loginPage,
+    test('TS01 - locked out user sees error message', { tag: ['@smoke', '@mobile'] }, async ({ loginPage }) => {
+        await loginPage.navigate();
+        await loginPage.login(lockedOut.username, lockedOut.password);
+        await expect(loginPage.errorMessage).toContainText('locked out');
+    });
+
+    test('TS02 - standard user can log in', { tag: ['@smoke', '@mobile'] }, async ({ loginPage, productsPage }) => {
+        await loginPage.navigate();
+        await loginPage.login(standard.username, standard.password);
+        await expect(productsPage.pageTitle).toHaveText('Products');
+    });
+
+});
+
+// Shopping tests reuse the session saved by auth.setup.ts, so they start
+// already logged in on the products page — no login steps needed.
+test.describe('SauceDemo - shopping', () => {
+    test.use({ storageState: saucedemoConfig.authFile });
+
+    test.beforeEach(async ({ page }) => {
+        await page.goto(`${saucedemoConfig.baseUrl}/inventory.html`);
+    });
+
+    test('TS03 - adding and removing an item updates the cart badge', { tag: '@regression' }, async ({ productsPage }) => {
+        await productsPage.addBackpackToCart();
+        await expect(productsPage.shoppingCartBadge).toHaveText('1');
+
+        await productsPage.removeBackpackFromCart();
+        await expect(productsPage.shoppingCartBadge).toBeHidden();
+    });
+
+    test('TS04 - checkout requires a first name', { tag: '@regression' }, async ({ productsPage, cartPage, checkoutPage }) => {
+        const { lastName, postalCode } = buildCheckoutInfo();
+
+        await productsPage.addBackpackToCart();
+        await productsPage.openCart();
+        await cartPage.startCheckout();
+
+        await checkoutPage.fillCheckoutInfo('', lastName, postalCode);
+        await checkoutPage.continueToOverview();
+        await expect(checkoutPage.errorMessage).toContainText('First Name is required');
+    });
+
+    test('TS05 - full checkout completes an order', { tag: '@smoke' }, async ({
         productsPage,
         cartPage,
         checkoutPage,
         checkoutOverviewPage,
         checkoutCompletePage,
     }) => {
-        // Locked out user cannot login
-        await loginPage.navigate();
-        await loginPage.login(lockedOut.username, lockedOut.password);
-        expect(await loginPage.getErrorMessageText()).toContain('locked out');
+        const { firstName, lastName, postalCode } = buildCheckoutInfo();
 
-        // Login with valid user
-        await loginPage.login(standard.username, standard.password);
-        expect(await productsPage.getPageTitleText()).toBe('Products');
+        await productsPage.addBikeLightToCart();
+        await productsPage.openCart();
+        await expect(cartPage.cartItems).toHaveCount(1);
+        await cartPage.startCheckout();
 
-        // Add backpack, go to cart, continue shopping
-        await productsPage.clickAddToCartBackpackButton();
-        expect(await productsPage.getCartBadgeText()).toBe('1');
-        await productsPage.clickShoppingCartLink();
-        expect(await cartPage.getCartItemCount()).toBe(1);
-        await cartPage.clickContinueShoppingButton();
-
-        // Swap backpack for bike light
-        await productsPage.clickRemoveBackpackButton();
-        expect(await productsPage.isCartBadgeVisible()).toBe(false);
-        await productsPage.clickAddToCartBikeLightButton();
-        expect(await productsPage.getCartBadgeText()).toBe('1');
-
-        // Go to cart and start checkout
-        await productsPage.clickShoppingCartLink();
-        expect(await cartPage.getCartItemCount()).toBe(1);
-        await cartPage.clickCheckoutButton();
-
-        // Form validation - missing first name
-        await checkoutPage.fillCheckoutInfo('', lastName, postalCode);
-        await checkoutPage.clickContinueButton();
-        expect(await checkoutPage.getErrorMessageText()).toContain('First Name is required');
-
-        // Fill correct info and continue
         await checkoutPage.fillCheckoutInfo(firstName, lastName, postalCode);
-        await checkoutPage.clickContinueButton();
+        await checkoutPage.continueToOverview();
 
-        // Verify overview and complete order
-        expect(await checkoutOverviewPage.getPageTitleText()).toBe('Checkout: Overview');
-        expect(await checkoutOverviewPage.getItemTotalText()).toContain('$9.99');
-        await checkoutOverviewPage.clickFinishButton();
+        await expect(checkoutOverviewPage.pageTitle).toHaveText('Checkout: Overview');
+        await expect(checkoutOverviewPage.itemTotal).toContainText('$9.99');
+        await checkoutOverviewPage.finishOrder();
 
-        expect(await checkoutCompletePage.getCompleteHeaderText()).toBe('Thank you for your order!');
+        await expect(checkoutCompletePage.completeHeader).toHaveText('Thank you for your order!');
     });
 
 });

@@ -27,6 +27,8 @@ STEP 2 — Update the config file  (config/amazon/amazon.ts)
   - Replace baseUrl with your portal URL
   - Replace username and password with real credentials
   - Add more user types if your portal has them (e.g. admin, viewer, guest)
+  - For real secrets: rename the PORTALNAME_* env vars, add them to
+    .env.example, and put the actual values in .env (gitignored)
 
 
 STEP 3 — Update each page object  (pages/amazon/0X_PageName.ts)
@@ -44,9 +46,12 @@ Tips for finding locators:
   - Look for id, data-test, name attributes (most reliable)
   - Use CSS selectors like: #id, .class, [name="x"], [data-test="x"]
 
-Add action methods and getter methods following the existing pattern:
-  - Action  →  async clickSomething(): Promise<void>
-  - Getter  →  async getSomethingText(): Promise<string>
+Locators are PUBLIC READONLY fields — tests assert on them directly with
+auto-retrying web-first assertions. Only add methods for ACTIONS:
+  - Action     →  async clickSomething(): Promise<void>
+  - Assertion  →  done in the test:  await expect(page.someLocator).toHaveText('...')
+(No getter methods like getSomethingText() — grabbing text once with
+innerText() is flaky; expect(locator) retries until it matches.)
 
 
 STEP 4 — Update the fixture file  (fixtures/amazon/amazon.ts)
@@ -65,7 +70,10 @@ STEP 5 — Write the test  (tests/amazon/amazon.spec.ts)
 -------------------------------------------------------
   - Import from your fixture file (not from @playwright/test directly)
   - Declare the page objects you need in the test parameters
-  - One test covering the full workflow from login to final action
+  - Write SMALL INDEPENDENT tests (login, search, checkout, ...) instead of
+    one giant E2E test — each must be runnable on its own
+  - Assert web-first:  await expect(homePage.pageTitle).toHaveText('...')
+  - Tag critical tests with { tag: '@smoke' } so npm run test:smoke finds them
   - Follow the pattern: navigate → act → expect
 
 
@@ -101,4 +109,12 @@ pages/
 
 tests/
   amazon/
-    amazon.spec.ts        ← single E2E test file
+    amazon.spec.ts        ← small independent tests, tagged @smoke/@regression
+
+
+API PORTALS
+-----------
+Testing an API instead of (or alongside) a UI? Same workflow, but copy
+template/api/portalname/01_SampleApi.ts instead of page files.
+See api/restfulbooker/ + tests/restfulbooker/ for a complete working
+example, and README "Add a New API Portal" for the steps.

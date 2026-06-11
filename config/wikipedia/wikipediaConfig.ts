@@ -1,6 +1,4 @@
+// Values can be overridden per environment via .env (see .env.example).
 export const wikipediaConfig = {
-    baseUrl: "https://www.wikipedia.org",         
-    users: {
-        standard: { username: "your_username", password: "your_password" },   
-    }
-}
+    baseUrl: process.env.WIKIPEDIA_BASE_URL ?? 'https://www.wikipedia.org',
+};

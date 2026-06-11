@@ -2,11 +2,11 @@ import { Page, Locator } from '@playwright/test';
 import { orangehrmConfig } from '../../config/orangehrm/orangehrm';
 
 export class LoginPage {
-    private page: Page;
-    private usernameField: Locator;
-    private passwordField: Locator;
-    private loginButton: Locator;
-    private errorMessage: Locator;
+    readonly page: Page;
+    readonly usernameField: Locator;
+    readonly passwordField: Locator;
+    readonly loginButton: Locator;
+    readonly errorMessage: Locator;
 
     constructor(page: Page) {
         this.page = page;
@@ -19,21 +19,10 @@ export class LoginPage {
     async navigate(): Promise<void> {
         await this.page.goto(orangehrmConfig.baseUrl);
     }
-    async enterUsername(username: string): Promise<void> {
-        await this.usernameField.fill(username);
-    }
-    async enterPassword(password: string): Promise<void> {
-        await this.passwordField.fill(password);
-    }
-    async clickLoginButton(): Promise<void> {
-        await this.loginButton.click();
-    }
+
     async login(username: string, password: string): Promise<void> {
-        await this.enterUsername(username);
-        await this.enterPassword(password);
-        await this.clickLoginButton();
-    }
-    async getErrorMessageText(): Promise<string> {
-        return this.errorMessage.innerText();
+        await this.usernameField.fill(username);
+        await this.passwordField.fill(password);
+        await this.loginButton.click();
     }
 }

@@ -1,20 +1,11 @@
-import { test, expect }      from '../../fixtures/wikipedia/wikipedia';
-  import { wikipediaConfig }   from '../../config/wikipedia/wikipediaConfig';
+import { test, expect } from '../../fixtures/wikipedia/wikipedia';
 
-  test.describe('Wikipedia', () => {
-  
-      test('TS01 - Full E2E - search and verify result', async ({
-          loginPage,  
-          searchPage,
-      }) => {
-          // Navigate to Wikipedia
-          await loginPage.navigate();
+test.describe('Wikipedia', () => {
 
-          // Search for Playwright
-          await searchPage.search('Playwright');
+    test('TS01 - search shows the matching article', { tag: '@smoke' }, async ({ loginPage, searchPage }) => {
+        await loginPage.navigate();
+        await searchPage.search('Playwright');
+        await expect(searchPage.firstHeading).toContainText('Playwright');
+    });
 
-          // Verify the result page heading
-          expect(await searchPage.getHeadingText()).toContain('Playwright');
-      });
-
-  });
+});

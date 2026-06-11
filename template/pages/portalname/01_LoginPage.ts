@@ -1,7 +1,12 @@
 // PURPOSE: This is a Page Object for the Login screen.
 // A Page Object models one page of the website. It has two responsibilities:
-//   1. LOCATORS  — store references to the elements on that page (fields, buttons, etc.)
-//   2. METHODS   — expose readable actions (login, enterUsername) and queries (getErrorMessageText)
+//   1. LOCATORS — public readonly fields pointing at elements on the page.
+//      Tests assert on these directly:  await expect(loginPage.errorMessage).toContainText('...')
+//   2. METHODS  — readable actions (navigate, login) that interact with the page.
+//
+// WHY PUBLIC LOCATORS: Playwright's `expect(locator)` assertions auto-retry
+// until the element appears — far more reliable than grabbing text once with
+// innerText(). So pages expose locators for ASSERTING and methods for ACTING.
 //
 // WHY: Tests should never contain raw Playwright locators like page.locator('#user').
 // If the site changes a selector, you fix it here in one place, not in every test.
@@ -15,15 +20,14 @@
 import { Page, Locator } from '@playwright/test';
 import { portalnameConfig } from '../../config/portalname/portalname';
 
-// TODO: rename class "LoginPage" stays the same - no need to rename this one
 export class LoginPage {
-    private page: Page;
+    readonly page: Page;
 
-    // Each private field is a locator — a pointer to one element on the page.
-    private usernameField: Locator;
-    private passwordField: Locator;
-    private loginButton: Locator;
-    private errorMessage: Locator;
+    // Each readonly field is a locator — a pointer to one element on the page.
+    readonly usernameField: Locator;
+    readonly passwordField: Locator;
+    readonly loginButton: Locator;
+    readonly errorMessage: Locator;
 
     constructor(page: Page) {
         this.page = page;
@@ -35,37 +39,19 @@ export class LoginPage {
     }
 
     // --- ACTION METHODS ---
-    // These methods perform interactions on the page.
-    // Tests call these instead of writing raw Playwright commands.
+    // These perform interactions. Tests call these instead of raw Playwright commands.
 
     async navigate(): Promise<void> {
         // Reads the URL from config so it never needs to be hardcoded here.
         await this.page.goto(portalnameConfig.baseUrl);
     }
 
-    async enterUsername(username: string): Promise<void> {
+    async login(username: string, password: string): Promise<void> {
         await this.usernameField.fill(username);
-    }
-
-    async enterPassword(password: string): Promise<void> {
         await this.passwordField.fill(password);
-    }
-
-    async clickLoginButton(): Promise<void> {
         await this.loginButton.click();
     }
 
-    // Convenience method: combines the three steps above into one call.
-    async login(username: string, password: string): Promise<void> {
-        await this.enterUsername(username);
-        await this.enterPassword(password);
-        await this.clickLoginButton();
-    }
-
-    // --- GETTER METHODS ---
-    // These methods read text or state from the page so tests can assert on it.
-
-    async getErrorMessageText(): Promise<string> {
-        return this.errorMessage.innerText();
-    }
+    // NOTE: no getter methods needed — tests assert on the public locators:
+    //   await expect(loginPage.errorMessage).toContainText('Invalid credentials');
 }

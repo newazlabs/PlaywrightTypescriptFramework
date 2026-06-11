@@ -1,20 +1,13 @@
 import { test, expect } from '../../fixtures/bookstoscrape/bookstoscrape';
 
-  test.describe('Books to Scrape', () => {
+test.describe('Books to Scrape', () => {
 
-      test('TS01 - Full E2E - browse books and view detail', async ({
-          homePage,
-          bookPage,
-      }) => {
-          // Navigate to home page
-          await homePage.navigate();
+    test('TS01 - browse books across pages', { tag: ['@smoke', '@mobile'] }, async ({ homePage }) => {
+        await homePage.navigate();
+        await expect(homePage.bookItems).toHaveCount(20);
 
-          // Verify 20 books are shown on the first page
-          expect(await homePage.getBookCount()).toBe(20);
+        await homePage.goToNextPage();
+        await expect(homePage.bookItems).toHaveCount(20);
+    });
 
-          // Go to next page and verify 20 books again
-          await homePage.clickNextPage();
-          expect(await homePage.getBookCount()).toBe(20);
-      });
-
-  });
+});

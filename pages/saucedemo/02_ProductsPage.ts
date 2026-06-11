@@ -1,41 +1,32 @@
-import {Page, Locator} from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 
-export class ProductsPage{
-    private pageTitle:Locator;
-    private addToCartBackpackButton: Locator;
-    private removeBackpackButton: Locator;
-    private addToCartBikeLightButton: Locator;
-    private shoppingCartBadge: Locator;
-    private shoppingCartLink: Locator;
+export class ProductsPage {
+    readonly pageTitle: Locator;
+    readonly shoppingCartBadge: Locator;
+    readonly shoppingCartLink: Locator;
+    readonly addToCartBackpackButton: Locator;
+    readonly removeBackpackButton: Locator;
+    readonly addToCartBikeLightButton: Locator;
 
-    constructor(page:Page){
-        this.pageTitle = page.locator(".title");
-        this.addToCartBackpackButton = page.locator("#add-to-cart-sauce-labs-backpack");
-        this.removeBackpackButton = page.locator("#remove-sauce-labs-backpack");
-        this.addToCartBikeLightButton = page.locator("#add-to-cart-sauce-labs-bike-light");
-        this.shoppingCartBadge = page.locator('[data-test="shopping-cart-badge"]');
-        this.shoppingCartLink = page.locator('[data-test="shopping-cart-link"]');
+    constructor(page: Page) {
+        this.pageTitle                = page.locator('.title');
+        this.shoppingCartBadge        = page.locator('[data-test="shopping-cart-badge"]');
+        this.shoppingCartLink         = page.locator('[data-test="shopping-cart-link"]');
+        this.addToCartBackpackButton  = page.locator('#add-to-cart-sauce-labs-backpack');
+        this.removeBackpackButton     = page.locator('#remove-sauce-labs-backpack');
+        this.addToCartBikeLightButton = page.locator('#add-to-cart-sauce-labs-bike-light');
     }
 
-    async getPageTitleText(): Promise<string>{
-        return this.pageTitle.innerText();
-    }
-    async getCartBadgeText(): Promise<string>{
-        return this.shoppingCartBadge.innerText();
-    }
-    async isCartBadgeVisible(): Promise<boolean>{
-        return this.shoppingCartBadge.isVisible();
-    }
-    async clickAddToCartBackpackButton(): Promise<void>{
+    async addBackpackToCart(): Promise<void> {
         await this.addToCartBackpackButton.click();
     }
-    async clickRemoveBackpackButton(): Promise<void>{
+    async removeBackpackFromCart(): Promise<void> {
         await this.removeBackpackButton.click();
     }
-    async clickAddToCartBikeLightButton(): Promise<void>{
+    async addBikeLightToCart(): Promise<void> {
         await this.addToCartBikeLightButton.click();
     }
-    async clickShoppingCartLink(): Promise<void>{
+    async openCart(): Promise<void> {
         await this.shoppingCartLink.click();
     }
 }

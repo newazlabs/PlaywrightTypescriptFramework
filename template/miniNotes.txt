@@ -38,7 +38,8 @@ STEP 5 — Create the test file
 --------------------------------
 File: tests/amazon/amazon.spec.ts
 Copy from: template/tests/portalname/portalname.spec.ts
-Write the test steps using your page objects
+Write small independent tests using your page objects
+Assert web-first (await expect(locator)...) and tag with { tag: '@smoke' }
 
 
 STEP 6 — Add a run script
@@ -76,15 +77,28 @@ fixtures/
 pages/
   Contains one sub-folder per portal (e.g. pages/amazon/).
   Each sub-folder holds numbered Page Object files (01_LoginPage.ts,
-  02_HomePage.ts, …). Each file models one screen: it stores locators as
-  private fields and exposes typed action/query methods. Tests never touch
-  raw Playwright locators — they call these methods instead.
+  02_HomePage.ts, …). Each file models one screen: public readonly locator
+  fields for elements, plus action methods (clicks, fills). Tests call the
+  action methods and assert directly on the locators with auto-retrying
+  web-first assertions:  await expect(homePage.pageTitle).toHaveText('...')
 
 tests/
   Contains one sub-folder per portal (e.g. tests/amazon/).
   Each sub-folder holds the actual test spec file(s) (.spec.ts). Tests
   import the fixture from fixtures/ and the config from config/, then
   describe scenarios using the page-object methods from pages/.
+  Special file: tests/saucedemo/auth.setup.ts logs in once before the
+  suite and saves the session to playwright/.auth/ for tests to reuse.
+
+api/
+  Contains one sub-folder per API portal (e.g. api/restfulbooker/).
+  API clients are the API equivalent of Page Objects: one class per
+  resource, one method per endpoint. Wired into tests through fixtures
+  around Playwright's built-in `request` — no browser involved.
+
+utils/
+  Shared helpers. dataFactory.ts builds unique test data with faker so
+  parallel runs never collide on the same hardcoded values.
 
 template/
   Starter copies of every file type above, all named "portalname".

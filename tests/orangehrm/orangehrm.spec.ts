@@ -5,30 +5,29 @@ const { admin, invalid } = orangehrmConfig.users;
 
 test.describe('OrangeHRM', () => {
 
-    test('TS01 - Full E2E - login to employee list', async ({
+    test('TS01 - invalid credentials show an error', { tag: '@smoke' }, async ({ loginPage }) => {
+        await loginPage.navigate();
+        await loginPage.login(invalid.username, invalid.password);
+        await expect(loginPage.errorMessage).toContainText('Invalid credentials');
+    });
+
+    test('TS02 - admin can view the employee list', { tag: '@smoke' }, async ({
         loginPage,
         dashboardPage,
         employeeListPage,
     }) => {
-        test.setTimeout(120000);
+        // The public OrangeHRM demo server can be slow under load.
+        test.setTimeout(90_000);
 
-        // Invalid login - verify error message
         await loginPage.navigate();
-        await loginPage.login(invalid.username, invalid.password);
-        expect(await loginPage.getErrorMessageText()).toContain('Invalid credentials');
-
-        // Valid login - verify dashboard
         await loginPage.login(admin.username, admin.password);
-        expect(await dashboardPage.getDashboardHeaderText()).toBe('Dashboard');
+        await expect(dashboardPage.dashboardHeader).toHaveText('Dashboard');
 
-        // Navigate to PIM - Employee List
-        await dashboardPage.clickPimMenuLink();
-        expect(await employeeListPage.getPageHeaderText()).toBe('PIM');
+        await dashboardPage.openPimModule();
+        await expect(employeeListPage.pageHeader).toHaveText('PIM');
 
-        // Search all employees and verify results load
-        await employeeListPage.clickSearchButton();
-        const count = await employeeListPage.getEmployeeRowCount();
-        expect(count).toBeGreaterThan(0);
+        await employeeListPage.searchEmployees();
+        await expect(employeeListPage.employeeRows.first()).toBeVisible();
     });
 
 });
