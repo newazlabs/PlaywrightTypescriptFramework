@@ -3,6 +3,19 @@ HOW TO ADD A NEW PORTAL (Quick Guide)
 Example: adding "amazon"
 
 
+FASTEST WAY — one command
+--------------------------
+  npm run new:portal -- amazon          (UI portal)
+  npm run new:portal -- myapi --api     (also creates an API client template)
+
+This creates every folder and file from Steps 1-6 below, renames all the
+"portalname" tokens, and adds the test:amazon run script to package.json.
+Then just fill in the TODOs (URL, credentials, locators, test steps).
+
+The manual steps below produce the same result — useful for understanding
+what the generator creates.
+
+
 STEP 1 — Create these folders
 ------------------------------
 config/amazon/
@@ -99,6 +112,18 @@ api/
 utils/
   Shared helpers. dataFactory.ts builds unique test data with faker so
   parallel runs never collide on the same hardcoded values.
+
+scripts/
+  Node helper scripts. newPortal.js powers `npm run new:portal` — it
+  scaffolds a complete new portal from the template/ folder.
+
+TEST TAGS (for selective runs)
+  @smoke      critical path - also runs on Firefox/WebKit   npm run test:smoke
+  @regression deeper coverage, mocked-network, hybrid tests npm run test:regression
+  @api        API-only tests, no browser                    npm run test:api
+  @mobile     phone-viewport tests (Pixel 7)                npm run test:mobile
+  @a11y       accessibility scans (axe-core)                npm run test:a11y
+  @visual     screenshot comparison vs baseline             npm run test:visual
 
 template/
   Starter copies of every file type above, all named "portalname".

@@ -6,6 +6,10 @@ QUICK SUMMARY
 Copy this template/ folder, rename everything from "portalname" to your portal name,
 fill in the locators and credentials, then write your test.
 
+SHORTCUT: `npm run new:portal -- <name>` does Steps 1-6 automatically
+(add --api to also get an API client template). The steps below explain
+what it generates and how to fill everything in.
+
 
 STEP 1 — Copy and rename the files
 ------------------------------------
@@ -74,6 +78,8 @@ STEP 5 — Write the test  (tests/amazon/amazon.spec.ts)
     one giant E2E test — each must be runnable on its own
   - Assert web-first:  await expect(homePage.pageTitle).toHaveText('...')
   - Tag critical tests with { tag: '@smoke' } so npm run test:smoke finds them
+    (other tags: @regression, @api, @mobile, @a11y, @visual — @smoke tests
+    also run on Firefox/WebKit; @mobile tests run on a Pixel 7 viewport)
   - Follow the pattern: navigate → act → expect
 
 
